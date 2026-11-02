@@ -699,9 +699,9 @@ document.getElementById('song-upload-form').addEventListener('submit',async func
   const name=document.getElementById('upload-song-name').value.trim(),category=document.getElementById('upload-song-category').value;
   if(!name||!song||!image){showToast('Please complete all fields',true);return;}
   if(!/\.mp4$/i.test(song.name)||song.type&&song.type!=='video/mp4'&&song.type!=='audio/mp4'){showToast('Choose an MP4 song file',true);return;}
-  if(song.size>10*1024*1024){showToast('Song must be 10 MB or smaller',true);return;}
+  if(song.size>10*1000*1000){showToast('Song must be 10 MB or smaller',true);return;}
   if(!/^image\/(jpeg|png|webp)$/.test(image.type)){showToast('Choose JPG, PNG or WEBP image',true);return;}
-  if(image.size>1024*1024){showToast('Image must be 1 MB or smaller',true);return;}
+  if(image.size>1000*1000){showToast('Image must be 1 MB or smaller',true);return;}
   const body=new FormData();body.append('songName',name);body.append('category',category);body.append('isTrending',document.getElementById('upload-trending').checked?'true':'false');body.append('song',song);body.append('image',image);
   submit.disabled=true;progress.textContent='Uploading files and submitting for approval...';
   try{

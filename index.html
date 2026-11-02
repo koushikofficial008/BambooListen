@@ -693,7 +693,7 @@ function showToast(msg,isErr){
 
 
 const uploadBackdrop=document.getElementById('upload-console-backdrop');
-function openUploadConsole(){navigateTo('console');}
+function openUploadConsole(){uploadBackdrop.style.display='flex';}
 function showConsoleInfo(kind){
  const panel=document.getElementById('console-inline-info');
  if(kind==='terms')panel.innerHTML='<h3>Terms &amp; Conditions</h3><p>By using BambooListen, you agree to these basic terms:</p><ul><li>Only upload audio and images that you own or have permission to share.</li><li>Do not upload unlawful, harmful, misleading, or infringing content.</li><li>Submitted songs may be reviewed by the administrator before publication.</li><li>Content that violates these terms may be edited or removed.</li><li>Use BambooListen respectfully and do not misuse the upload feature.</li></ul><p>These terms may be updated as the service changes.</p>';

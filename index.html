@@ -449,7 +449,7 @@ function applyHomeContent(){
   }
 
   const rC=document.getElementById('recent-songs-list'),oneDay=Date.now()-(86400000);
-  const rec=allSongs.filter(function(s){return getSafeTimestamp(s.submittedAt)>=oneDay;});
+  const rec=allSongs.filter(function(s){return getSafeTimestamp(s.submittedAt||s.createdAt)>=oneDay;});
   if(!isInitialSongsLoaded)rC.innerHTML=getSkeletonSongRowsHtml(3);
   else if(!rec.length)rC.innerHTML=`<div class="empty-box"><i class="fa-solid fa-clock-rotate-left"></i><br>No song uploaded in the last 24h</div>`;
   else rC.innerHTML=rec.map(function(s){

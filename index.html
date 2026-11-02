@@ -75,7 +75,7 @@ body{display:flex;justify-content:center;align-items:center;}
 .trending-container{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:12px;padding:4px 18px 12px;-webkit-overflow-scrolling:touch;touch-action:pan-x;}
 .trending-container::-webkit-scrollbar{display:none;}
 .trending-card{flex:0 0 270px;height:150px;border-radius:20px;position:relative;overflow:hidden;scroll-snap-align:start;cursor:pointer;border:1px solid var(--border-light);box-shadow:0 6px 18px rgba(0,0,0,.4);background:#101a13;}
-.trending-card img{width:100%;height:100%;object-fit:cover;display:block;}
+.trending-card img{width:100%;height:100%;object-fit:cover;display:block;}.trending-card.playing-trending-card{border-color:rgba(52,211,153,.95);box-shadow:0 0 0 1px rgba(52,211,153,.5),0 0 22px rgba(16,185,129,.32),0 6px 18px rgba(0,0,0,.4);}.trending-card.playing-trending-card .trending-overlay{background:linear-gradient(to top,rgba(5,8,6,.98) 10%,rgba(5,8,6,.28) 68%,rgba(16,185,129,.08) 100%);}.trending-card.playing-trending-card h4{color:#6ee7b7;}
 .trending-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(5,8,6,.95) 10%,rgba(5,8,6,.2) 65%,transparent 100%);display:flex;flex-direction:column;justify-content:flex-end;padding:12px;}
 .trending-badge{position:absolute;top:10px;left:10px;background:rgba(16,185,129,.9);padding:3px 9px;border-radius:8px;font-size:10px;font-weight:800;color:#032014;}
 .trending-card h4{font-size:15px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
@@ -219,7 +219,7 @@ const audio=document.getElementById('audio-engine'),seekSlider=document.getEleme
 
 function getSkeletonSongRowsHtml(c){c=c||5;let h='';for(let i=0;i<c;i++)h+=`<div class="skeleton-song-row"><div class="skeleton-art skeleton-shimmer"></div><div class="skeleton-info"><div class="skeleton-title skeleton-shimmer"></div><div class="skeleton-subtitle skeleton-shimmer"></div></div><div class="skeleton-btn skeleton-shimmer"></div></div>`;return h;}
 function getSkeletonTrendingCardsHtml(c){c=c||3;let h='';for(let i=0;i<c;i++)h+=`<div class="skeleton-trending-card skeleton-shimmer"></div>`;return h;}
-function showHomeSkeletons(){const loading=document.getElementById('song-content-loading');if(loading)loading.classList.add('active');document.getElementById('trending-list').innerHTML=getSkeletonTrendingCardsHtml(3);document.getElementById('recent-songs-list').innerHTML=getSkeletonSongRowsHtml(3);document.getElementById('all-songs-list').innerHTML=getSkeletonSongRowsHtml(5);}
+function showHomeSkeletons(){document.getElementById('trending-list').innerHTML=getSkeletonTrendingCardsHtml(3);document.getElementById('recent-songs-list').innerHTML=getSkeletonSongRowsHtml(3);document.getElementById('all-songs-list').innerHTML=getSkeletonSongRowsHtml(5);}
 function showAllSkeletons(){showHomeSkeletons();document.getElementById('search-songs-list').innerHTML=getSkeletonSongRowsHtml(5);}
 showAllSkeletons();
 
@@ -464,14 +464,13 @@ function startTrendingAutoSwipe(){
 function stopTrendingAutoSwipe(){if(trendingAutoSwipeTimer){clearInterval(trendingAutoSwipeTimer);trendingAutoSwipeTimer=null;}trendingAutoSwipeIndex=0;}
 
 function applyHomeContent(){
-  const loading=document.getElementById('song-content-loading');if(loading)loading.classList.toggle('active',!isInitialSongsLoaded);
   const trC=document.getElementById('trending-list'),trSongs=allSongs.filter(function(s){return s.isTrending===true;});
   if(!isInitialSongsLoaded)trC.innerHTML=getSkeletonTrendingCardsHtml(3);
   else if(!trSongs.length){stopTrendingAutoSwipe();trC.innerHTML=`<div class="empty-box" style="padding:16px 0;"><i class="fa-solid fa-fire-burner"></i><br>No featured trending songs</div>`;}
   else{
     trC.innerHTML=trSongs.map(function(song){
       const bannerUrl=(song.trendingBannerUrl||song.imageUrl||song.image||PLACEHOLDER_IMG);
-      return `<div class="trending-card" data-song-id="${song.id}" onclick="playSongById('${song.id}','home')">
+      return `<div class="trending-card ${String(activeSongId)===String(song.id)&&!audio.paused?'playing-trending-card':''}" data-song-id="${song.id}" onclick="playSongById('${song.id}','home')">
         <img src="${escapeHtml(bannerUrl)}" alt="${escapeHtml(song.title||'Trending')}" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='${PLACEHOLDER_IMG}'">
         <div class="trending-overlay"><span class="trending-badge"><i class="fa-solid fa-bolt"></i> TRENDING</span><h4>${escapeHtml(song.title||'Untitled')}</h4><p>${escapeHtml(song.category||'Featured')}</p></div>
       </div>`;
@@ -610,6 +609,8 @@ function updateAllSongRowIcons(force){
   if(!force&&state===lastRenderedRowState)return;
   lastRenderedRowState=state;
   const rows=document.querySelectorAll('.song-row');
+  const trendingCards=document.querySelectorAll('.trending-card');
+  trendingCards.forEach(function(card){card.classList.toggle('playing-trending-card',card.getAttribute('data-song-id')===String(activeSongId)&&!audio.paused);});
   const activeIcon=isAudioBuffering?'fa-solid fa-circle-notch fa-spin':(audio.paused?'fa-solid fa-play':'fa-solid fa-pause');
   rows.forEach(function(row){
     const rId=row.getAttribute('data-song-id'),ic=row.querySelector('.play-btn-circle i');

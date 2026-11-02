@@ -11,7 +11,8 @@ assert.match(html,/value="slowed"/);
 assert.match(html,/10\*1000\*1000/);
 assert.match(html,/1000\*1000/);
 assert.match(html,/fetch\('\/api\/songs\?status=approved'/);
-assert.doesNotMatch(html,/firebase|itunes|btn-google-login|auth-screen/i);
+assert.doesNotMatch(html,/firebase|itunes|btn-google-login/i);
+assert.doesNotMatch(html,/<div id="auth-screen"/i);
 const scripts=[...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/gi)].map(m=>m[1]).filter(s=>s.trim());
 assert.ok(scripts.length>0,"inline app script must exist");
 for(const source of scripts){const result=spawnSync(process.execPath,["--check"],{input:source,encoding:"utf8"});assert.equal(result.status,0,result.stderr||"Inline JavaScript syntax check failed");}

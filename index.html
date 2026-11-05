@@ -527,7 +527,7 @@ async function loadSongsFromApi(){
     finishStartupLoading();
   }catch(err){
     if(!isInitialSongsLoaded){showStartupError();}
-    else showToast('Unable to refresh songs. Check your connection.',true);
+    else{applyHomeContent();if(document.getElementById('user-search-input')&&document.getElementById('user-search-input').value.trim())renderSearchList(searchResults);showToast('Unable to refresh songs. Check your connection.',true);}
   }
 }
 
@@ -799,10 +799,10 @@ function setPlaybackSpeed(s){
   currentPlaybackRate=s;audio.playbackRate=s;
   document.querySelectorAll('.speed-opt').forEach(function(el){el.classList.remove('active');});
   document.querySelectorAll('.speed-opt i').forEach(function(el){el.style.display='none';});
-  if(window.event&&window.event.currentTarget){
-    window.event.currentTarget.classList.add('active');
-    const chk=window.event.currentTarget.querySelector('i');if(chk)chk.style.display='inline-block';
-  }
+  const chk=document.getElementById('sp-'+s);
+  const selectedOption=chk&&chk.closest('.speed-opt');
+  if(selectedOption)selectedOption.classList.add('active');
+  if(chk)chk.style.display='inline-block';
   closeSpeedMenu();showToast(`Speed set to ${s}x`);
 }
 function showToast(msg,isErr){

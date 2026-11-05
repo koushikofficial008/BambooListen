@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import assert from "node:assert/strict";
 const html=readFileSync(new URL("../index.html",import.meta.url),"utf8");
-assert.match(html,/class="console-open-btn"[^>]*>Console<\/button>/);
+assert.match(html,/<button class="nav-item" id="nav-btn-console"[^>]*>[\s\S]*?<span>Console<\/span>[\s\S]*?<\/button>/);
 assert.match(html,/id="song-upload-form"/);
 assert.match(html,/value="music"/);
 assert.match(html,/value="phonk"/);
